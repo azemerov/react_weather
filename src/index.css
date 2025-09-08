@@ -11,3 +11,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.top {
+   background: #1ec01e;
+   border: 1px solid #08080825;
+   float: top;
+   height: 40px;
+}
+
+.bottom {
+   float: bottom;
+   height: 80px;
+}
+
+.day {
+   float: left;
+   width: 160px;
+   border: 1px solid #08080825;
+}
+
+.Card {
+  width: 190px;
+}
