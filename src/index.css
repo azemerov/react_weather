@@ -33,3 +33,7 @@ code {
 .Card {
   width: 190px;
 }
+
+.left {
+   float: left;
+}

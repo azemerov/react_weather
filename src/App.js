@@ -1,16 +1,19 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card'
 //import InputField from '../components/InputField';
+import Form from 'react-bootstrap/Form';
 
-async function makeRequest() {
+async function makeRequest(zip_code) {
 
+    //alert('Your ZIP is: ' + zip_code);
+    console.log('loading for zip=['+zip_code+']');
     let response;
     try {
       //response = await fetch("https://api.weatherapi.com/v1/current.json?q=76040&key=1265eb95a1c24244be4183635250609", {
-      response = await fetch("https://api.weatherapi.com/v1/forecast.json?q=76040&days=10&key=1265eb95a1c24244be4183635250609", {
+      response = await fetch("https://api.weatherapi.com/v1/forecast.json?q="+zip_code+"&days=10&key=1265eb95a1c24244be4183635250609", {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -40,37 +43,90 @@ async function makeRequest() {
   }
 
 
+function InputField(
+  { name, label, type, placeholder, error, fieldRef }
+) {
+  //alert('Input fielddYour ZIP is: ' + fieldRef.value);
+  return (
+    <Form.Group controlId={name} className="left">
+      {label && <Form.Label className="left">{label}</Form.Label>}
+      <Form.Control
+        className="left"
+        type={type || 'text'}
+        placeholder={placeholder}
+        ref={fieldRef}
+        defaultValue={fieldRef.value}
+      />
+      <Form.Text className="left">{error}</Form.Text>
+    </Form.Group>
+  );
+}
 function App() {
   const [day, setDay] = useState("unknown day");
-  const [values, setValues] = useState();
+  const [forecast, setForecast] = useState();
+  const [zip, setZip] = useState("76040");
 
-  async function getValue(name) {
-    // return "XXX";
-    let response = await makeRequest();
-    return name+" = "+response.body["current"][name];
-  }
-  async function getValues(onResult) {
-    let response = await makeRequest();
-    onResult(response.body);
-  }
-//<button onClick={() => getValues(setValues)}>Load</button>
+  const [formErrors, setFormErrors] = useState({});
+  const zipField = useRef();
+  zipField.value = zip;
+
+
+  // async function getValue(name) {
+  //   let response = await makeRequest(zip);
+  //   return name+" = "+response.body["current"][name];
+  // }
+
+  useEffect(() => {
+    (
+      async () => {
+        console.log('useEffect, zip='+zip);
+        //getValues(setForecast)
+        let response = await makeRequest(zip);
+        setForecast(response.body);
+      }
+    )();
+  }, [zip]);
+
+  // async function buttonClickHandler(onResult) {
+  //   let response = await makeRequest(zip);
+  //   onResult(response.body);
+  // }
+//<button onClick={() => buttonClickHandler(setForecast)}>Load</button>
+//error={formErrors.username}
+//<Button variant="primary" onClick={() => buttonClickHandler(setForecast)}>Load</Button>
          
+  const onSubmit = (ev) => {
+    console.log('onSubmit');
+    ev.preventDefault();
+    //alert('Your ZIP is: ' + zipField.current.value);
+    if (zipField.current==null || zipField.current.value==="") return;
+    setZip(zipField.current.value);
+  };  
+
+  console.log('draw App');
   return (
     <div className="App">
+
       <div className="top">
-        <Button variant="primary" onClick={() => getValues(setValues)}>Load</Button>
+        <Form onSubmit={onSubmit}>
+          <InputField
+            name="zipcode" label="" fieldRef={zipField}
+          />
+          <Button className="left" variant="primary" type="submit">Show forecast</Button>
+        </Form>
+        <div >{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
       </div>
       <div className="bottom">
-       <Day vals={values} index={0}>...</Day>
-       <Day vals={values} index={1}>...</Day>
-       <Day vals={values} index={2}>...</Day>
-       <Day vals={values} index={3}>...</Day>
-       <Day vals={values} index={4}>...</Day>
-       <Day vals={values} index={5}>...</Day>
-       <Day vals={values} index={6}>...</Day>
-       <Day vals={values} index={7}>...</Day>
-       <Day vals={values} index={8}>...</Day>
-       <Day vals={values} index={9}>...</Day>
+       <Day vals={forecast} index={0}>...</Day>
+       <Day vals={forecast} index={1}>...</Day>
+       <Day vals={forecast} index={2}>...</Day>
+       <Day vals={forecast} index={3}>...</Day>
+       <Day vals={forecast} index={4}>...</Day>
+       <Day vals={forecast} index={5}>...</Day>
+       <Day vals={forecast} index={6}>...</Day>
+       <Day vals={forecast} index={7}>...</Day>
+       <Day vals={forecast} index={8}>...</Day>
+       <Day vals={forecast} index={9}>...</Day>
        
       </div>
     </div>
@@ -96,7 +152,7 @@ function geticon(vals, index) {
 }
 
 function Day({vals, index}) {
-   console.log('Day component #'+index);
+   //console.log('Draw Day component #'+index);
    /*
     <div><b>{getdate(vals, index)}</b></div>
     <div>{"Temp: "+getval(vals, index, "mintemp_c")+" - "+getval(vals, index, "maxtemp_c")+" C"}</div>
@@ -108,18 +164,34 @@ function Day({vals, index}) {
       <Card.Header>{getdate(vals, index)}</Card.Header>
       <Card.Body>
         <Card.Title>{getdate(vals, index)}</Card.Title>
-        <Card.Text>
-          <img src={geticon(vals, index)} class="card-img-fluid"></img>
+          <img src={geticon(vals, index)} className="card-img-fluid"></img>
           <div>{"Temp (C): "+getval(vals, index, "mintemp_c")+"-"+getval(vals, index, "maxtemp_c")}</div>
           <div>{"Cloud: "+getval(vals, index, "cloud")}</div>
           <div>{"Wind (kph): "+getval(vals, index, "maxwind_kph")+"-"+getval(vals, index, "maxwind_kph")}</div>
           <div>{"Precip (mm): "+getval(vals, index, "totalprecip_mm")}</div>
           <div>{getval(vals, index, "daily_will_it_rain")===0 ? "Dry" : "Rain "+getval(vals, index, "totalprecip_mm")+"mm"}</div>
           <div>{"Chance: "+getval(vals, index, "daily_chance_of_rain")+"%"}</div>
-        </Card.Text>
+<Card.Text></Card.Text>
       </Card.Body>
      </Card>
   </div>
+}
+
+// TODO: try controlled input, like 
+function ControlledInputExample() {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  return (
+    <input
+      type="text"
+      value={inputValue} // Value is driven by state
+      onChange={handleChange} // Updates state on change
+    />
+  );
 }
 
 export default App;
