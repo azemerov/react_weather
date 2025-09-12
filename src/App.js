@@ -65,6 +65,7 @@ function App() {
   const [day, setDay] = useState("unknown day");
   const [forecast, setForecast] = useState();
   const [zip, setZip] = useState("76040");
+  const [fieldValue, setFieldValue] = useState(zip);
 
   const [formErrors, setFormErrors] = useState({});
   const zipField = useRef();
@@ -103,18 +104,42 @@ function App() {
     setZip(zipField.current.value);
   };  
 
-  console.log('draw App');
+  const handleChange = (event) => {
+    //console.log('handleChange='+event.target.value);
+    setFieldValue(event.target.value);
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      // Prevent default form submission if the input is inside a form
+      event.preventDefault(); 
+      //console.log('handleKeyDown ENTER');
+      setZip(fieldValue); // Update state on Enter
+      //setCurrentZip(''); // Clear the input after submission (optional)
+    }
+  };
+
+        // <Form onSubmit={onSubmit}>
+        //   <InputField
+        //     name="zipcode" label="" fieldRef={zipField}
+        //   />
+        //   <Button className="left" variant="primary" type="submit">Show forecast</Button>
+        // </Form>
+
+console.log('draw App');
   return (
     <div className="App">
 
       <div className="top">
-        <Form onSubmit={onSubmit}>
-          <InputField
-            name="zipcode" label="" fieldRef={zipField}
-          />
-          <Button className="left" variant="primary" type="submit">Show forecast</Button>
-        </Form>
-        <div >{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
+        <input
+          className="left"
+          type="text"
+          value={fieldValue} // Value is driven by state
+          onChange={handleChange} // Updates state on change
+          onKeyDown={handleKeyDown}
+          placeholder="Type ZIP code and press Enter"
+        />
+        <div className="left">---</div>
+        <div className="left">{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
       </div>
       <div className="bottom">
        <Day vals={forecast} index={0}>...</Day>
