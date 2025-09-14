@@ -12,11 +12,51 @@ code {
     monospace;
 }
 
+.App {
+  padding: 0;
+}
+
+.Header {
+  border-bottom: 1px solid #ddd;
+}
+
+.Sidebar {
+  width: 80px;
+  margin: 5px;
+  position: sticky;
+  top: 32px;
+  align-self: flex-start;
+  align-items: start;
+}
+
+.Sidebar .nav-item {
+  width: 100%;
+}
+
+.Sidebar a {
+  color: #444;
+}
+
+.Sidebar a:hover {
+  background-color: #eee;
+}
+
+.Sidebar a:visited {
+  color: #444;
+}
+
 .top {
    background: #1ec01e;
    border: 1px solid #08080825;
    float: top;
    height: 40px;
+}
+
+.days {
+   background: #5341b9;
+   border: 1px solid #08080825;
+   float: top;
+   height: 300px;
 }
 
 .bottom {
