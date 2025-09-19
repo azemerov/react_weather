@@ -14,7 +14,7 @@ function App() {
   return (
     <Container fluid className="App">
       <Header />
-      <Container>
+      <Container fluid >
         <Stack direction="horizontal">
           <Sidebar />
           <BrowserRouter>

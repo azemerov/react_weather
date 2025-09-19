@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Card from 'react-bootstrap/Card'
 import { makeRequest, getdate, getval, geticon } from "./ForecastAPI";
 import Container from 'react-bootstrap/Container';
-
+import InputField from "./InputField";
+import Stack from 'react-bootstrap/Stack';
 
 export function Forecast({type}) {
   const [day, setDay]           = useState("unknown day");
@@ -80,53 +81,29 @@ export function Forecast({type}) {
     //console.log("details="+details);
   }
 
-  console.log('draw App');
+  console.log('draw Forecast');
   return (
-    <div className="App">
+    <Container fluid className="Forecast">
 
-        <div className="top">
-            <input
-            className="left"
-            type="text"
-            value={fieldValue} // Value is driven by state
-            onChange={handleChange} // Updates state on change
-            onKeyDown={handleKeyDown}
-            placeholder="Type ZIP code and press Enter"
-            />
-        <div className="left">---</div>
-        <div className="left">{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
-            <input
-            className="left"
-            type="text"
-            value={field2Value} // Value is driven by state
-            onChange={handleChange2} // Updates state on change
-            onKeyDown={handleKeyDown2}
-            placeholder="Type DT in yyyy-mm-dd format and press Enter"
-            />
-        </div>
-        <div className="days">
-            <Day vals={forecast} index={0} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={1} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={2} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={3} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={4} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={5} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={6} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={7} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={8} onClickHandler={onDayClick}>...</Day>
-            <Day vals={forecast} index={9} onClickHandler={onDayClick}>...</Day>
-        </div>
-      
-        <Container  > 
-            {currentIdx > -1} &&
-            {getdate(forecast, currentIdx)}<br />
-            {"Temp: "+getval(forecast, currentIdx, "mintemp_c")+"-"+getval(forecast, currentIdx, "maxtemp_c")+" C "} <br />
-            {"Max.Wind: "+getval(forecast, currentIdx, "maxwind_kph")+" km/h "} <br/>
-            {getval(forecast, currentIdx, "daily_will_it_rain")===0 ? "Dry " : "Rain "}<br/> 
-            {getval(forecast, currentIdx, "daily_chance_of_rain")+"% "}<br/>
-            {"Precip.: "+getval(forecast, currentIdx, "totalprecip_mm")+"mm"}
-        </Container>
-    </div>
+      <Stack className="top" direction="horizontal">
+        <InputField id="zip" className="m-2" initvalue={zip} type="text" placeholder="Type ZIP code and press Enter" onEnterValue={(val) => {setZip(val);}}  />
+        <div className="m-2">{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
+        <InputField id="dt" className="m-4" initvalue={dt} type="text" placeholder="Type DT in yyyy-mm-dd format and press Enter" onEnterValue={(val) => {setDt(val);}} />
+        </Stack>
+      <div className="days">
+        <Day vals={forecast} index={0} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={1} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={2} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={3} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={4} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={5} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={6} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={7} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={8} onClickHandler={onDayClick}>...</Day>
+        <Day vals={forecast} index={9} onClickHandler={onDayClick}>...</Day>
+      </div>
+      <Details forecast={forecast} currentIdx={currentIdx} />
+    </Container>
   );
 }
 
@@ -134,14 +111,12 @@ function Day({vals, index, onClickHandler}) {
    //console.log('Draw Day component #'+index);
    return <div className="day">
      <Card style={{ width: '170px', margin: 0, }} onClick={() => onClickHandler(vals, index)}>
-      <Card.Header>{getdate(vals, index)}</Card.Header>
+      <Card.Header><b>{getdate(vals, index)}</b></Card.Header>
       <Card.Body>
-        <Card.Title>{getdate(vals, index)}</Card.Title>
           <img src={geticon(vals, index)} className="card-img-fluid"></img>
           <div>{getval(vals, index, "mintemp_c")+"-"+getval(vals, index, "maxtemp_c")+" C"}</div>
           <div>{getval(vals, index, "maxwind_kph")+"-"+getval(vals, index, "maxwind_kph")+" km/h"}</div>
-          
-          
+          <div>Humidity: {getval(vals, index, "avghumidity")+" %"}</div>
           <div>{
             (getval(vals, index, "daily_will_it_rain")===0 ? "Dry " : "Rain ") + 
             getval(vals, index, "daily_chance_of_rain")+"% "+
@@ -156,7 +131,22 @@ function Day({vals, index, onClickHandler}) {
 }
 
 
-function Details({text}) {
+function Details({forecast, currentIdx}) {
   //console.log("draw Details="+text);
-  return <Container >{text}</Container>;
+  //return <Container >{text}</Container>;
+
+  if (forecast  && currentIdx >= -1)
+  return    <Container  > 
+          {currentIdx}<br />
+          {getdate(forecast, currentIdx)}<br />
+          {"Temp: "+getval(forecast, currentIdx, "mintemp_c")+"-"+getval(forecast, currentIdx, "maxtemp_c")+" C "} <br />
+          {"Max.Wind: "+getval(forecast, currentIdx, "maxwind_kph")+" km/h "} <br/>
+          {getval(forecast, currentIdx, "daily_will_it_rain")===0 ? "Dry " : "Rain "}<br/> 
+          {getval(forecast, currentIdx, "daily_chance_of_rain")+"% "}<br/>
+          {"Precip.: "+getval(forecast, currentIdx, "totalprecip_mm")+"mm"}
+      </Container>;
+  else return <>
+  </>
+  
+
 }
