@@ -40,9 +40,9 @@ export function Forecast({type}) {
               (day, i) => { return <Day vals={forecast} index={i} onClickHandler={onDayClick}>...</Day> }
             ) : <></>
           
-        }
+          }
+          <Details forecast={forecast} currentIdx={currentIdx} />
         </Stack>
-      <Details forecast={forecast} currentIdx={currentIdx} />
     </Container>
   );
 }
@@ -74,8 +74,7 @@ function Day({vals, index, onClickHandler}) {
 function Details({forecast, currentIdx}) {
 
   if (forecast && currentIdx > -1)
-    return <Container className="with-border" > 
-          {currentIdx}<br />
+    return <Container className="with-border" style={{ width: '300px', margin: '10px', }} >  
           {getdate(forecast, currentIdx)}<br />
           {"Temp: "+getval(forecast, currentIdx, "mintemp_c")+"-"+getval(forecast, currentIdx, "maxtemp_c")+" C "} <br />
           {"Max.Wind: "+getval(forecast, currentIdx, "maxwind_kph")+" km/h "} <br/>
@@ -84,5 +83,7 @@ function Details({forecast, currentIdx}) {
           {"Precip.: "+getval(forecast, currentIdx, "totalprecip_mm")+"mm"}
       </Container>;
   else 
-    return <><i>click on a day...</i></>;
+    return <Container className="with-border" style={{ width: '300px', margin: '10px', }} >
+        <i>click on a day...</i>
+        </Container>;
 }

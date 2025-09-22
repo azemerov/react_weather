@@ -47,17 +47,17 @@ code {
 }
 
 .top {
-   background: #1ec01e;
-   height: 40px;
+  background: #1ec01e;
+  height: 40px;
 }
 
 .day {
-   float: left;
-   width: 160px;
+  float: left;
+  width: 160px;
 }
 
 .left {
-   float: left;
+  float: left;
 }
 
 .container-fluid {
@@ -66,4 +66,9 @@ code {
 
 .with-border {
   border: 1px solid #08080825;
+}
+
+.info {
+  left: 0;
+  width: 300px;
 }
