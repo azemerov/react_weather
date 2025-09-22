@@ -1,8 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-//import logo from './logo.svg';
 import './App.css';
-//import InputField from '../components/InputField';
-//import Form from 'react-bootstrap/Form';
 import { Forecast } from "./Forecast";
 import Container from 'react-bootstrap/Container';
 import Stack from 'react-bootstrap/Stack';
@@ -30,29 +27,6 @@ function App() {
       </Container>
     </Container>
   );
-  //return <Forecast />;
 }
-
-function Test({num}) {
-  //let num = 222;
-  return <div>Test #{num}</div>;
-}
-
-/* example of controlled input 
-function ControlledInputExample() {
-  const [inputValue, setInputValue] = useState('');
-
-  const handleChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  return (
-    <input
-      type="text"
-      value={inputValue} // Value is driven by state
-      onChange={handleChange} // Updates state on change
-    />
-  );
-}*/
 
 export default App;
