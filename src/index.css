@@ -18,6 +18,7 @@ code {
 
 .Header {
   border-bottom: 1px solid #ddd;
+   background: #1595ac;
 }
 
 .Sidebar {
@@ -76,4 +77,8 @@ code {
 
 .left {
    float: left;
+}
+
+.container-fluid {
+  padding: 0;
 }

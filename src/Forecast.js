@@ -90,7 +90,7 @@ export function Forecast({type}) {
         <div className="m-2">{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</div>
         <InputField id="dt" className="m-4" initvalue={dt} type="text" placeholder="Type DT in yyyy-mm-dd format and press Enter" onEnterValue={(val) => {setDt(val);}} />
         </Stack>
-      <div className="days">
+{/*      <div className="days">
         <Day vals={forecast} index={0} onClickHandler={onDayClick}>...</Day>
         <Day vals={forecast} index={1} onClickHandler={onDayClick}>...</Day>
         <Day vals={forecast} index={2} onClickHandler={onDayClick}>...</Day>
@@ -102,6 +102,15 @@ export function Forecast({type}) {
         <Day vals={forecast} index={8} onClickHandler={onDayClick}>...</Day>
         <Day vals={forecast} index={9} onClickHandler={onDayClick}>...</Day>
       </div>
+*/}
+        {
+          (forecast && "forecast" in forecast) ? 
+            forecast["forecast"]["forecastday"].map(
+              (day, i) => { return <Day vals={forecast} index={i} onClickHandler={onDayClick}>...</Day> }
+            ) : <></>
+          
+        }
+
       <Details forecast={forecast} currentIdx={currentIdx} />
     </Container>
   );
