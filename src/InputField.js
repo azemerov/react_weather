@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState} from "react";
 
 export default function InputField(
   { id, name, className, initvalue, type, placeholder, onEnterValue }

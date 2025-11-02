@@ -1,16 +1,20 @@
-import { useState, useRef, useEffect } from "react";
+import { Activity, useState, useEffect } from "react";
 import Card from 'react-bootstrap/Card'
 import { makeRequest, getdate, getval, geticon } from "./ForecastAPI";
 import Container from 'react-bootstrap/Container';
 import InputField from "./InputField";
 import Stack from 'react-bootstrap/Stack';
+import MapView from "./MapView";
 
 export function Forecast({type}) {
   const [forecast, setForecast] = useState();
   const [zip, setZip]           = useState("76040");
   const [dt, setDt]             = useState("");
   const [currentIdx, setCurrentIdx] = useState(-1);
-
+  const [showWithActivity, setShowWithActivity] = useState(true);
+  const [long, setLong] = useState(-96);
+  const [latt, setLatt] = useState(32);
+  
   useEffect(() => {
     (
       async () => {
@@ -18,8 +22,15 @@ export function Forecast({type}) {
         setForecast(response.body);
       }
     )();
-  }, [zip, dt]);
+  }, [zip, dt, type]);
          
+  useEffect(() => {
+    if (forecast && forecast.location) {
+      setLong(forecast.location.lon);
+      setLatt(forecast.location.lat);
+    }
+  }, [forecast]);
+
   function onDayClick(forecast, index) {
     setCurrentIdx(index);
   }
@@ -30,8 +41,10 @@ export function Forecast({type}) {
 
       <Stack className="top" direction="horizontal">
         <InputField id="zip" className="m-2" initvalue={zip} type="text" placeholder="Type ZIP code and press Enter" onEnterValue={(val) => {setZip(val);}}  />
-        <div className="m-2"><b>{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</b></div>
+        <div className="m-2"><b>{forecast && forecast.location && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</b></div>
         <InputField id="dt" className="m-4" initvalue={dt} type="text" placeholder="Type DT in yyyy-mm-dd format and press Enter" onEnterValue={(val) => {setDt(val);}} />
+        <button onClick={() => setLong((x) => x+10)}>East</button>
+        <button onClick={() => setLatt((x) => x+10)}>North</button>
       </Stack>
       <Stack direction="horizontal">
          {
@@ -43,6 +56,12 @@ export function Forecast({type}) {
           }
           <Details forecast={forecast} currentIdx={currentIdx} />
         </Stack>
+        <button onClick={() => setShowWithActivity((x) => !x)}>
+          {showWithActivity ? "Hide" : "Show"} Map
+        </button>
+        <Activity mode={showWithActivity ? "visible" : "hidden"}>
+          <MapView long={long} latt={latt}></MapView>
+        </Activity>
     </Container>
   );
 }
@@ -53,7 +72,7 @@ function Day({vals, index, onClickHandler}) {
      <Card style={{ width: '170px', margin: 0, }} onClick={() => onClickHandler(vals, index)}>
       <Card.Header><b>{getdate(vals, index)}</b></Card.Header>
       <Card.Body>
-          <img src={geticon(vals, index)} className="card-img-fluid"></img>
+          <img src={geticon(vals, index)} className="card-img-fluid" alt="?"></img>
           <div>{getval(vals, index, "mintemp_c")+"-"+getval(vals, index, "maxtemp_c")+" C"}</div>
           <div>{getval(vals, index, "maxwind_kph")+"-"+getval(vals, index, "maxwind_kph")+" km/h"}</div>
           <div>Humidity: {getval(vals, index, "avghumidity")+" %"}</div>
@@ -84,6 +103,6 @@ function Details({forecast, currentIdx}) {
       </Container>;
   else 
     return <Container className="with-border" style={{ width: '300px', margin: '10px', }} >
-        <i>click on a day...</i>
+        <i>click on a day to show details ...</i>
         </Container>;
 }
