@@ -4,11 +4,7 @@ import { makeRequest, getdate, getval, geticon } from "./ForecastAPI";
 import Container from 'react-bootstrap/Container';
 import InputField from "./InputField";
 import Stack from 'react-bootstrap/Stack';
-<<<<<<< HEAD
-import OpenLayersMap from "./GeoMap.js";
-=======
 import MapView from "./MapView";
->>>>>>> 64d14a9cc77f5c6ba565015e2ec0fa44b9432b04
 
 export function Forecast({type}) {
   console.log(`Forecast(${type})`);
@@ -16,62 +12,29 @@ export function Forecast({type}) {
   const [zip, setZip]           = useState("76040");
   const [dt, setDt]             = useState("");
   const [currentIdx, setCurrentIdx] = useState(-1);
-<<<<<<< HEAD
-  const [lat, setLat] = useState(0.0);
-  const [lon, setLon] = useState(0.0);
-
-=======
   const [showWithActivity, setShowWithActivity] = useState(true);
   const [long, setLong] = useState(-96);
   const [latt, setLatt] = useState(32);
-  
->>>>>>> 64d14a9cc77f5c6ba565015e2ec0fa44b9432b04
+
   useEffect(() => {
     (
       async () => {
         console.log("Forecast() zip|dt");
         let response = await makeRequest(type, zip, dt);
         setForecast(response.body);
-        if (forecast && forecast.location)
-        {
-          console.log("forecast.location="+forecast.location.name+
-            " "+forecast.location.country+
-            ", "+forecast.location.lattitude+":"+forecast.location.longitute
-          );
-          setLat(forecast.location.lattitude);
-          setLon(forecast.location.longitute);
-        }
-        else
-        {
-          console.log("undefined location");
-          setLat(0.0); setLon(0.0);
-        }
       }
     )();
-<<<<<<< HEAD
-  }, [zip, dt]);
-=======
   }, [zip, dt, type]);
-         
-  useEffect(() => {
+
+useEffect(() => {
     if (forecast && forecast.location) {
       setLong(forecast.location.lon);
       setLatt(forecast.location.lat);
     }
   }, [forecast]);
->>>>>>> 64d14a9cc77f5c6ba565015e2ec0fa44b9432b04
 
   function onDayClick(forecast, index) {
     setCurrentIdx(index);
-  }
-
-  function doCoordinateSet(longitute, latitude) {
-    try {
-      // DO NOTHING setZip(longitute+","+latitude);
-    }
-    catch (error) {
-      console.log(error);
-    }
   }
 
   //console.log("doCoordinateSet=" + doCoordinateSet);
@@ -80,14 +43,12 @@ export function Forecast({type}) {
 
       <Stack className="top" direction="horizontal">
         <InputField id="zip" className="m-2" initvalue={zip} type="text" placeholder="Type ZIP code and press Enter" onEnterValue={(val) => {setZip(val);}}  />
-        { (forecast && forecast != undefined && forecast.location) ?
-        <div className="m-2"><b>{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</b></div>
+        { (forecast && forecast !== undefined && forecast.location) ?
+        <div className="m-2"><b>{forecast && forecast.location && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</b></div>
         :
         <></>
         }
         <InputField id="dt" className="m-4" initvalue={dt} type="text" placeholder="Type DT in yyyy-mm-dd format and press Enter" onEnterValue={(val) => {setDt(val);}} />
-        <button onClick={() => setLong((x) => x+10)}>East</button>
-        <button onClick={() => setLatt((x) => x+10)}>North</button>
       </Stack>
       <Stack direction="horizontal" style={{"column-gap": "1em"}}>
          {
