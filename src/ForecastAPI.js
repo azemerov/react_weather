@@ -5,7 +5,7 @@ export async function makeRequest(type, zip_code, dt) {
     let response;
     try {
         let request = "https://api.weatherapi.com/v1/"+type+".json?q="+zip_code+"&days=10&key=1265eb95a1c24244be4183635250609";
-        if (dt!="")
+        if (dt!=="")
             request += "&dt="+dt;
         /*if (type=="future")
             request += "&dt=2025-10-01";
@@ -46,21 +46,21 @@ export async function makeRequest(type, zip_code, dt) {
 
 
 export function getdate(vals, index) {
-  if (vals==undefined) return  "-";
+  if (vals===undefined) return  "-";
   else if (index < 0) return  "-";
   else if (vals["forecast"]["forecastday"].length < index+1) return "~";
   else return vals["forecast"]["forecastday"][index]["date"];
 }
 
 export function getval(vals, index, name) {
-  if (vals==undefined) return  "-"; 
+  if (vals===undefined) return  "-"; 
   else if (index < 0) return  "-";
   else if (vals["forecast"]["forecastday"].length < index+1) return "~";
   else return vals["forecast"]["forecastday"][index]["day"][name];
 }
 
 export function geticon(vals, index) {
-  if (vals==undefined) return  "-"; 
+  if (vals===undefined) return  "-"; 
   else if (index < 0) return  "-";
   else if (vals["forecast"]["forecastday"].length < index+1) return "~";
   else return "https:"+vals["forecast"]["forecastday"][index]["day"]["condition"]["icon"];
