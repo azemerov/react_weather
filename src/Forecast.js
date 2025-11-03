@@ -4,45 +4,81 @@ import { makeRequest, getdate, getval, geticon } from "./ForecastAPI";
 import Container from 'react-bootstrap/Container';
 import InputField from "./InputField";
 import Stack from 'react-bootstrap/Stack';
+import OpenLayersMap from "./GeoMap.js";
 
 export function Forecast({type}) {
+  console.log(`Forecast(${type})`);
   const [forecast, setForecast] = useState();
   const [zip, setZip]           = useState("76040");
   const [dt, setDt]             = useState("");
   const [currentIdx, setCurrentIdx] = useState(-1);
+  const [lat, setLat] = useState(0.0);
+  const [lon, setLon] = useState(0.0);
 
   useEffect(() => {
     (
       async () => {
+        console.log("Forecast() zip|dt");
         let response = await makeRequest(type, zip, dt);
         setForecast(response.body);
+        if (forecast && forecast.location)
+        {
+          console.log("forecast.location="+forecast.location.name+
+            " "+forecast.location.country+
+            ", "+forecast.location.lattitude+":"+forecast.location.longitute
+          );
+          setLat(forecast.location.lattitude);
+          setLon(forecast.location.longitute);
+        }
+        else
+        {
+          console.log("undefined location");
+          setLat(0.0); setLon(0.0);
+        }
       }
     )();
   }, [zip, dt]);
-         
+
   function onDayClick(forecast, index) {
     setCurrentIdx(index);
   }
 
-  console.log('draw Forecast');
+  function doCoordinateSet(longitute, latitude) {
+    try {
+      // DO NOTHING setZip(longitute+","+latitude);
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  //console.log("doCoordinateSet=" + doCoordinateSet);
   return (
     <Container fluid className="Forecast">
 
       <Stack className="top" direction="horizontal">
         <InputField id="zip" className="m-2" initvalue={zip} type="text" placeholder="Type ZIP code and press Enter" onEnterValue={(val) => {setZip(val);}}  />
+        { (forecast && forecast != undefined && forecast.location) ?
         <div className="m-2"><b>{forecast && forecast.location.name+", "+forecast.location.region+", "+forecast.location.country}</b></div>
+        :
+        <></>
+        }
         <InputField id="dt" className="m-4" initvalue={dt} type="text" placeholder="Type DT in yyyy-mm-dd format and press Enter" onEnterValue={(val) => {setDt(val);}} />
       </Stack>
-      <Stack direction="horizontal">
+      <Stack direction="horizontal" style={{"column-gap": "1em"}}>
          {
           (forecast && "forecast" in forecast) ? 
             forecast["forecast"]["forecastday"].map(
-              (day, i) => { return <Day vals={forecast} index={i} onClickHandler={onDayClick}>...</Day> }
+              (day, i) => { return <Day key={"Day:"+i} vals={forecast} index={i} onClickHandler={onDayClick}>...</Day> }
             ) : <></>
-          
           }
+          <Details forecast={forecast} currentIdx={currentIdx} style={{align_self: 'center', padding: '10px', width: '190px'}}/>
+        </Stack>
+        <Stack direction="horizontal" >
           <Details forecast={forecast} currentIdx={currentIdx} />
         </Stack>
+        <OpenLayersMap /> {/*latitude={lat} longitute={lon} onCoordinateSet={doCoordinateSet}*/}
+
     </Container>
   );
 }
